@@ -11,6 +11,12 @@
             font-size: 24px;
             margin: 20px;
         }
+        #score {
+            font-size: 18px;
+        }
+        #players {
+            font-size: 18px;
+        }
         #buttons {
             margin: 20px;
         }
@@ -23,59 +29,106 @@
     </style>
 </head>
 <body>
+    <div id="players">
+        <input type="text" id="player1Name" placeholder="Nome do Jogador 1">
+        <input type="text" id="player2Name" placeholder="Nome do Jogador 2">
+    </div>
     <div id="question">Esta afirmação é verdadeira ou falsa?</div>
+    <div id="score">Pontuação:</div>
     <div id="buttons">
-        <button onclick="checkAnswer(true)">Verdadeiro</button>
-        <button onclick="checkAnswer(false)">Falso</button>
+        <button id="player1True" onclick="checkAnswer(true, 1)">Verdadeiro</button>
+        <button id="player1False" onclick="checkAnswer(false, 1)">Falso</button>
+        <button id="player2True" onclick="checkAnswer(true, 2)">Verdadeiro</button>
+        <button id="player2False" onclick="checkAnswer(false, 2)">Falso</button>
     </div>
     <div id="result"></div>
 
     <script>
         const questions = [
-        { text: 'Bullying e Brincadeira são a mesma coisa, ou são diferentes?', answer: true },
-        { text: 'Só é bullying quando alguém agride fisicamente outra pessoa?', answer: false },
-        { text: 'Tirar sarro dos outros na internet também é bullying.', answer: true },
-        { text: 'Quando você vê alguém fazendo bullying, o melhor é não se meter para não piorar as coisas.',answer: false },
-        { text: 'Se um colega parecer triste ou muito chateado, você deve avisar à professora.',answer: true },
-        { text: 'Se alguém fizer bullying com você, você tem o direito de revidar?',answer: false },
-        { text: 'A culpa do bullying, às vezes, é da pessoa que sofre o bullying também.',answer: false },
-        { text: 'Se alguém fizer bullying com você, o melhor é ignorar até a pessoa parar.',answer: false },
-        { text: 'É impossível ter uma escola sem bullying.',answer: false },
-        { text: 'Quem pratica bullying também precisa de ajuda.',answer: true },
-        { text: '"Bullying" tem origem na palavra "bully", em inglês, que significa valentão.',answer: true },
-        { text: 'O único jeito de saber se alguém sofreu bullying é se mais alguém viu para dizer.',answer: false },
-        { text: 'Você pode ajudar um colega que sofreu bullying indo tirar satisfação com quem fez o bullying com seu colega.',answer: false },
-        { text: 'Fazer fofoca e espalhar boatos também é bullying.',answer: true },
-        { text: 'Excluir um colega do convívio social também é bullying.',answer: true },
-        { text: 'Para evitar o bullying na escola, só é preciso educar as pessoas que fazem bullying com os outros.',answer: false },
-        { text: 'Todo mundo é diferente e todos nós temos que tentar entender os outros.', answer: true },
-        { text: 'A melhor forma de lidar com as nossas diferenças é mantendo contato só com os amigos.',answer: false },
-        { text: 'As pessoas que fazem bullying aprendem sozinhas que fizeram uma coisa errada.',answer: false },
-        { text: 'O que a pessoa que sofre bullying mais precisa é de apoio para se sentir segura.',answer: true },
+            { text: "A Terra é plana.", answer: false },
+            { text: "A água ferve a 100°C a nível do mar.", answer: true },
+            { text: "O Sol gira em torno da Terra.", answer: false },
         ];
 
+        let currentPlayer = 1;
         let currentQuestionIndex = 0;
+        let player1Score = 0;
+        let player2Score = 0;
         const resultDiv = document.getElementById("result");
-        
+        const scoreDiv = document.getElementById("score");
+        const player1NameInput = document.getElementById("player1Name");
+        const player2NameInput = document.getElementById("player2Name");
+
         function showQuestion(index) {
             if (index < questions.length) {
                 const questionDiv = document.getElementById("question");
                 questionDiv.textContent = questions[index].text;
                 resultDiv.textContent = '';
+                scoreDiv.textContent = `${player1NameInput.value}: ${player1Score} | ${player2NameInput.value}: ${player2Score}`;
+                updateButtonsAvailability();
             } else {
-                resultDiv.textContent = 'Fim do jogo!';
+                showFinalScore();
             }
         }
-        
-        function checkAnswer(userAnswer) {
+
+        function checkAnswer(userAnswer, player) {
             const correctAnswer = questions[currentQuestionIndex].answer;
             if (userAnswer === correctAnswer) {
                 resultDiv.textContent = 'Correto!';
+                if (player === 1) {
+                    player1Score++;
+                } else {
+                    player2Score++;
+                }
             } else {
                 resultDiv.textContent = 'Errado!';
             }
             currentQuestionIndex++;
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
             setTimeout(() => showQuestion(currentQuestionIndex), 1000); // Passa para a próxima pergunta após 1 segundo.
+        }
+
+        function updateButtonsAvailability() {
+            const player1Buttons = [document.getElementById("player1True"), document.getElementById("player1False")];
+            const player2Buttons = [document.getElementById("player2True"), document.getElementById("player2False")];
+
+            if (currentPlayer === 1) {
+                enableButtons(player1Buttons);
+                disableButtons(player2Buttons);
+            } else {
+                enableButtons(player2Buttons);
+                disableButtons(player1Buttons);
+            }
+        }
+
+        function enableButtons(buttons) {
+            for (const button of buttons) {
+                button.disabled = false;
+            }
+        }
+
+        function disableButtons(buttons) {
+            for (const button of buttons) {
+                button.disabled = true;
+            }
+        }
+
+        function showFinalScore() {
+            resultDiv.textContent = 'Fim do jogo!';
+            disableAllButtons();
+            scoreDiv.textContent = `Pontuação final: ${player1NameInput.value}: ${player1Score} | ${player2NameInput.value}: ${player2Score}`;
+        }
+
+        function disableAllButtons() {
+            const allButtons = [
+                document.getElementById("player1True"),
+                document.getElementById("player1False"),
+                document.getElementById("player2True"),
+                document.getElementById("player2False"),
+            ];
+            for (const button of allButtons) {
+                button.disabled = true;
+            }
         }
 
         showQuestion(currentQuestionIndex);

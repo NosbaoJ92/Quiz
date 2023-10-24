@@ -42,6 +42,9 @@
         <button id="player2True" onclick="checkAnswer(true, 2)" disabled>Verdadeiro</button>
         <button id="player2False" onclick="checkAnswer(false, 2)" disabled>Falso</button>
     </div>
+    <button id="passButton" onclick="passToOpponent()" disabled>Passar</button>
+
+
     <div id="result"></div>
 
     <script>
@@ -72,6 +75,7 @@
         let currentQuestionIndex = 0;
         let player1Score = 0;
         let player2Score = 0;
+        let questionSkipped = false;
         const resultDiv = document.getElementById("result");
         const scoreDiv = document.getElementById("score");
         const player1NameInput = document.getElementById("player1Name");
@@ -90,19 +94,35 @@
             startButton.disabled = true;
             player1NameInput.disabled = true;
             player2NameInput.disabled = true;
+            // Ocultar elementos de entrada de nome e botão de início
+            document.getElementById("players").style.display = "none";
             showQuestion(currentQuestionIndex);
         }
+
         function showQuestion(index) {
-            if (index < questions.length) {
-                const questionDiv = document.getElementById("question");
-                questionDiv.textContent = questions[index].text;
-                resultDiv.textContent = '';
-                scoreDiv.textContent = `${player1NameInput.value}: ${player1Score} | ${player2NameInput.value}: ${player2Score}`;
-                updateButtonsAvailability();
-            } else {
-                showFinalScore();
-            }
+    if (index < questions.length) {
+        const questionDiv = document.getElementById("question");
+        questionDiv.textContent = questions[index].text;
+        resultDiv.textContent = '';
+        scoreDiv.textContent = `${player1NameInput.value}: ${player1Score} | ${player2NameInput.value}: ${player2Score}`;
+        questionSkipped = false;
+        updateButtonsAvailability();
+    } else {
+        showFinalScore();
+    }
+
+    // Habilita ou desabilita o botão de passar com base na pergunta pulada
+    const passButton = document.getElementById("passButton");
+    passButton.disabled = questionSkipped;
+}
+
+        function passToOpponent() {
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            resultDiv.textContent = 'Vez passada para o Jogador ' + currentPlayer;
+            updateButtonsAvailability();
         }
+
+
 
         function checkAnswer(userAnswer, player) {
             const correctAnswer = questions[currentQuestionIndex].answer;
@@ -121,18 +141,27 @@
             setTimeout(() => showQuestion(currentQuestionIndex), 1000); // Passa para a próxima pergunta após 1 segundo.
         }
 
-        function updateButtonsAvailability() {
-            const player1Buttons = [document.getElementById("player1True"), document.getElementById("player1False")];
-            const player2Buttons = [document.getElementById("player2True"), document.getElementById("player2False")];
+        function passQuestion() {
+        questionSkipped = true;
+        resultDiv.textContent = 'Pergunta pulada!';
+        currentQuestionIndex++;
+        setTimeout(() => showQuestion(currentQuestionIndex), 1000);
+    }
 
-            if (currentPlayer === 1) {
-                enableButtons(player1Buttons);
-                disableButtons(player2Buttons);
-            } else {
-                enableButtons(player2Buttons);
-                disableButtons(player1Buttons);
-            }
-        }
+
+    function updateButtonsAvailability() {
+    const player1Buttons = [document.getElementById("player1True"), document.getElementById("player1False")];
+    const player2Buttons = [document.getElementById("player2True"), document.getElementById("player2False")];
+
+    if (currentPlayer === 1) {
+        enableButtons(player1Buttons);
+        disableButtons(player2Buttons);
+    } else {
+        enableButtons(player2Buttons);
+        disableButtons(player1Buttons);
+    }
+}
+
 
         function enableButtons(buttons) {
             for (const button of buttons) {
@@ -162,7 +191,7 @@
             for (const button of allButtons) {
                 button.disabled = true;
             }
-        }        
+        }
 
         player1NameInput.addEventListener("input", () => {
             startButton.disabled = player1NameInput.value === "" || player2NameInput.value === "";

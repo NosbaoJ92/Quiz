@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Verdadeiro ou Falso</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        #question {
+            font-size: 24px;
+            margin: 20px;
+        }
+        #buttons {
+            margin: 20px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="question">Esta afirmação é verdadeira ou falsa?</div>
+    <div id="buttons">
+        <button onclick="checkAnswer(true)">Verdadeiro</button>
+        <button onclick="checkAnswer(false)">Falso</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+        { text: 'Bullying e Brincadeira são a mesma coisa, ou são diferentes?', correctAnswer: true },
+        { text: 'Só é bullying quando alguém agride fisicamente outra pessoa?', correctAnswer: false },
+        { text: 'Tirar sarro dos outros na internet também é bullying.', correctAnswer: true },
+        { text: 'Quando você vê alguém fazendo bullying, o melhor é não se meter para não piorar as coisas.',correctAnswer: false },
+        { text: 'Se um colega parecer triste ou muito chateado, você deve avisar à professora.',correctAnswer: true },
+        { text: 'Se alguém fizer bullying com você, você tem o direito de revidar?',correctAnswer: false },
+        { text: 'A culpa do bullying, às vezes, é da pessoa que sofre o bullying também.',correctAnswer: false },
+        { text: 'Se alguém fizer bullying com você, o melhor é ignorar até a pessoa parar.',correctAnswer: false },
+        { text: 'É impossível ter uma escola sem bullying.',correctAnswer: false },
+        { text: 'Quem pratica bullying também precisa de ajuda.',correctAnswer: true },
+        { text: '"Bullying" tem origem na palavra "bully", em inglês, que significa valentão.',correctAnswer: true },
+        { text: 'O único jeito de saber se alguém sofreu bullying é se mais alguém viu para dizer.',correctAnswer: false },
+        { text: 'Você pode ajudar um colega que sofreu bullying indo tirar satisfação com quem fez o bullying com seu colega.',correctAnswer: false },
+        { text: 'Fazer fofoca e espalhar boatos também é bullying.',correctAnswer: true },
+        { text: 'Excluir um colega do convívio social também é bullying.',correctAnswer: true },
+        { text: 'Para evitar o bullying na escola, só é preciso educar as pessoas que fazem bullying com os outros.',correctAnswer: false },
+        { text: 'Todo mundo é diferente e todos nós temos que tentar entender os outros.', correctAnswer: true },
+        { text: 'A melhor forma de lidar com as nossas diferenças é mantendo contato só com os amigos.',correctAnswer: false },
+        { text: 'As pessoas que fazem bullying aprendem sozinhas que fizeram uma coisa errada.',correctAnswer: false },
+        { text: 'O que a pessoa que sofre bullying mais precisa é de apoio para se sentir segura.',correctAnswer: true },
+        ];
+
+        let currentQuestionIndex = 0;
+        const resultDiv = document.getElementById("result");
+        
+        function showQuestion(index) {
+            if (index < questions.length) {
+                const questionDiv = document.getElementById("question");
+                questionDiv.textContent = questions[index].text;
+                resultDiv.textContent = '';
+            } else {
+                resultDiv.textContent = 'Fim do jogo!';
+            }
+        }
+        
+        function checkAnswer(userAnswer) {
+            const correctAnswer = questions[currentQuestionIndex].answer;
+            if (userAnswer === correctAnswer) {
+                resultDiv.textContent = 'Correto!';
+            } else {
+                resultDiv.textContent = 'Errado!';
+            }
+            currentQuestionIndex++;
+            setTimeout(() => showQuestion(currentQuestionIndex), 1000); // Passa para a próxima pergunta após 1 segundo.
+        }
+
+        showQuestion(currentQuestionIndex);
+    </script>
+</body>
+</html>
